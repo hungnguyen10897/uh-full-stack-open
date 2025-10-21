@@ -1,10 +1,22 @@
-const Persons = ({ persons, seachString }) => (
+const Persons = ({ persons, seachString, deletePerson }) => (
   <ul>
     {persons
-      .filter((person) => person.name.toLocaleLowerCase().includes(seachString))
+      .filter((person) => {
+        console.log(person);
+        return person.name.toLocaleLowerCase().includes(seachString);
+      })
       .map((person) => (
         <p key={person.name}>
-          {person.name} {person.number}
+          {person.name} {person.number}{" "}
+          <button
+            type="delete"
+            onClick={(event) => {
+              event.preventDefault();
+              deletePerson(person);
+            }}
+          >
+            delete
+          </button>
         </p>
       ))}
   </ul>
