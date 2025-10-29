@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseUrl = "https://uh-full-stack-open.onrender.com/api/persons";
+const baseUrl = "/api/persons";
 
 const getAll = () => {
     return axios
