@@ -1,10 +1,5 @@
 # uh-full-stack-open
 
-```
-npm create vite@latest
+Backend:
 
-cd ...
-
-npm install
-npm run dev
-```
+https://uh-full-stack-open.onrender.com
