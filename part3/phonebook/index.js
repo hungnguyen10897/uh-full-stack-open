@@ -1,6 +1,6 @@
 const express = require('express')
 const morgan = require('morgan')
-const { getAll, findById, addPerson } = require('./models/person')
+const { getAll, findById, addPerson, deletePersonById, updatePersonById } = require('./models/person')
 
 const app = express()
 
@@ -24,7 +24,7 @@ app.get('/', (request, response) => {
 
 app.get('/info', (request, response) => {
     const now = new Date();
-    response.send(`<p>Phonebook has info for ${persons.length} people</p><p>${now.toUTCString()}</p>`)
+    getAll(persons => response.send(`<p>Phonebook has info for ${persons.length} people</p><p>${now.toUTCString()}</p>`))
 })
 
 
@@ -32,7 +32,7 @@ app.get('/api/persons', (request, response) => {
     getAll().then(persons => response.json(persons))
 })
 
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response, next) => {
     findById(request.params.id).then(person => {
         if (person) {
             response.json(person)
@@ -40,13 +40,11 @@ app.get('/api/persons/:id', (request, response) => {
             response.status(404).end()
         }
     })
+        .catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', (request, response) => {
-    // const id = request.params.id
-    // persons = persons.filter(person => person.id !== id)
-
-    response.status(204).end()
+app.delete('/api/persons/:id', (request, response, next) => {
+    deletePersonById(request.params.id).then(result => response.status(204).end()).catch(error => next(error))
 })
 
 app.post('/api/persons', (request, response) => {
@@ -55,13 +53,35 @@ app.post('/api/persons', (request, response) => {
         return response.status(400).send('Missing attribute')
     }
 
-    // searchedPerson = persons.find(item => item.name === person.name)
-    // if (searchedPerson) {
-    //     return response.status(400).send('Duplicate')
-    // }
+    searchedPerson = persons.find(item => item.name === person.name)
+    if (searchedPerson) {
+        return response.status(400).send('Duplicate')
+    }
 
     addPerson(person).then(addedPerson => response.json(addedPerson))
 })
+
+app.put('/api/persons/:id', (request, response) => {
+    const person = request.body
+    if (!person.number) {
+        return response.status(400).send('Missing number')
+    }
+
+    updatePersonById(request.params.id, person)
+})
+
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message)
+
+    if (error.name === 'CastError') {
+        return response.status(400).send({ error: 'malformatted id' })
+    }
+
+    next(error)
+}
+
+// this has to be the last loaded middleware, also all the routes should be registered before this!
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {

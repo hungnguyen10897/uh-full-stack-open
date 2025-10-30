@@ -21,7 +21,6 @@ const personSchema = new mongoose.Schema({
 
 personSchema.set('toJSON', {
     transform: (document, returnedObject) => {
-        console.log('here')
         returnedObject.id = returnedObject._id.toString()
         delete returnedObject._id
         delete returnedObject.__v
@@ -32,10 +31,6 @@ const Person = mongoose.model('Person', personSchema)
 
 const findById = (id) => {
     return Person.findById(id)
-        .catch(error => {
-            console.log(error)
-            return undefined
-        })
 }
 
 const getAll = () => {
@@ -51,4 +46,12 @@ const addPerson = ({ name, number }) => {
     return person.save()
 }
 
-module.exports = { getAll, findById, addPerson }
+const deletePersonById = (id) => {
+    return Person.findByIdAndDelete(id)
+}
+
+const updatePersonById = (id, person) => {
+    return Person.findByIdAndUpdate(id, person)
+}
+
+module.exports = { getAll, findById, addPerson, deletePersonById, updatePersonById }
