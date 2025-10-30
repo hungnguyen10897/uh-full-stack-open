@@ -1,13 +1,7 @@
+require('dotenv').config()
 const mongoose = require('mongoose')
 
-if (process.argv.length < 3) {
-    console.log('give password, person name and phone number as arguments')
-    process.exit(1)
-}
-
-const password = process.argv[2]
-
-const url = `mongodb+srv://nodejsapp:${password}@cluster0.dkgcfoa.mongodb.net/?appName=Cluster0`
+const url = process.env.MONGODB_URI
 mongoose.set('strictQuery', false)
 mongoose.connect(url)
 
@@ -17,7 +11,7 @@ const personSchema = new mongoose.Schema({
 })
 const Person = mongoose.model('Person', personSchema)
 
-if (process.argv.length === 5) {
+if (process.argv.length === 4) {
     const name = process.argv[3]
     const number = process.argv[4]
 
