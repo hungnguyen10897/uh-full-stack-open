@@ -42,11 +42,17 @@ const App = () => {
       }
     } else {
       const person = { name: newName, number: newNumber };
-      personService.addPerson(person).then((newPerson) => {
-        setPersons(persons.concat(newPerson));
-        setNotification(`Added ${person.name}`);
-        setTimeout(() => setNotification(null), 2000);
-      });
+      personService
+        .addPerson(person)
+        .then((newPerson) => {
+          setPersons(persons.concat(newPerson));
+          setNotification(`Added ${person.name}`);
+          setTimeout(() => setNotification(null), 2000);
+        })
+        .catch((error) => {
+          console.log(error.response.data.error);
+          window.alert(error.response.data.error);
+        });
 
       setNewName("");
       setNewNumber("");
