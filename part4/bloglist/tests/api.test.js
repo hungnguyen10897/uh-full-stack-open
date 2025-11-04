@@ -59,6 +59,35 @@ test('a valid blog can be added ', async () => {
   assert(titles.includes(newBlog.title))
 })
 
+test('a valid blog can be deleted ', async () => {
+  const response1 = await api.get('/api/blogs')
+  const blogs = response1.body
+  const toBeDeletedBlog = blogs[0]
+
+  const response2 = await api.delete(`/api/blogs/${toBeDeletedBlog.id}`)
+  assert.strictEqual(response2.status, 204)
+
+  const response3 = await api.get('/api/blogs')
+  const newBlogs = response3.body
+  assert.strictEqual(newBlogs.length, blogs.length - 1)
+
+  const newBlogIds = newBlogs.map(blog => blog.id)
+  assert(!newBlogIds.includes(toBeDeletedBlog.id))
+})
+
+test('a blog can be updated ', async () => {
+  const response1 = await api.get('/api/blogs')
+  const blogs = response1.body
+  const toBeUpdatedBlog = { ...blogs[0], title: 'New title' }
+
+  const response2 = await api.put(`/api/blogs/${toBeUpdatedBlog.id}`).send(toBeUpdatedBlog)
+  assert.strictEqual(response2.status, 204)
+
+  const response3 = await api.get(`/api/blogs/${blogs[0].id}`)
+  const newBlog = response3.body
+  assert.strictEqual(newBlog.title, toBeUpdatedBlog.title)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
