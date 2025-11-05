@@ -14,7 +14,6 @@ const initialBlogs = [
     likes: 3
   },
 ]
-
 module.exports = {
-  initialBlogs,
+  initialBlogs
 }

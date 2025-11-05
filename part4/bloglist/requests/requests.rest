@@ -11,5 +11,19 @@ content-type: application/json
   "title": "testT",
   "author": "testA",
   "url": "testU",
-  "likes": "10"
+  "likes": "10",
+  "userId": "690b9ff548f857ad9dc0cae3"
+}
+
+###
+GET http://localhost:3003/api/users/
+
+###
+POST http://localhost:3003/api/users/ HTTP/1.1
+content-type: application/json
+
+{
+  "username": "testU1",
+  "name": "Test Name",
+  "password": "salainen?"
 }
