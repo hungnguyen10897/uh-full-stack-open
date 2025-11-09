@@ -15,13 +15,17 @@ const App = () => {
 
   const [user, setUser] = useState(null);
   const [addedBlog, setAddedBlog] = useState(null);
+  const [deletedBlog, setDeletedBlog] = useState(null);
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
-  }, [addedBlog]);
+    blogService.getAll().then((blogs) => {
+      const sorted = blogs.sort((a, b) => b.likes - a.likes);
+      setBlogs(sorted);
+    });
+  }, [addedBlog, deletedBlog]);
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem("loggedNoteappUser");
+    const loggedUserJSON = window.localStorage.getItem("loggedBlogAppUser");
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
       setUser(user);
@@ -35,7 +39,7 @@ const App = () => {
     try {
       const user = await loginService.login({ username, password });
       blogService.setToken(user.token);
-      window.localStorage.setItem("loggedNoteappUser", JSON.stringify(user));
+      window.localStorage.setItem("loggedBlogAppUser", JSON.stringify(user));
       setUser(user);
       setUsername("");
       setPassword("");
@@ -52,7 +56,7 @@ const App = () => {
 
     setUser(null);
     blogService.setToken(null);
-    window.localStorage.removeItem("loggedNoteappUser");
+    window.localStorage.removeItem("loggedBlogAppUser");
   };
 
   if (user === null) {
@@ -91,25 +95,24 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-
       <div>{Notification({ message: noti })}</div>
-
-      {user.name} logged in 
-      <button type="submit" onSubmit={handleLogout}>
+      {user.name} logged in
+      <button type="submit" onClick={handleLogout}>
         logout
       </button>
-
-      <p>
-        <BlogForm
-          setNoti={setNoti}
-          setErrorMessage={setErrorMessage}
-          setAddedBlog={setAddedBlog}
-        />
-      </p>
-
+      <BlogForm
+        setNoti={setNoti}
+        setErrorMessage={setErrorMessage}
+        setAddedBlog={setAddedBlog}
+      />
       <br />
       {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
+        <Blog
+          key={blog.id}
+          blog={blog}
+          user={user}
+          setDeletedBlog={setDeletedBlog}
+        />
       ))}
     </div>
   );

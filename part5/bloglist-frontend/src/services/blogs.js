@@ -21,4 +21,13 @@ const create = async newObject => {
   return response.data
 }
 
-export default { getAll, create, setToken }
+const likeBlog = async (blog) => {
+  await axios.put(`${baseUrl}/${blog.id}`, { ...blog, likes: blog.likes + 1, user: blog.user.id })
+  return { ...blog, likes: blog.likes + 1 }
+}
+
+const deleteBlog = async (blog) => {
+  await axios.delete(`${baseUrl}/${blog.id}`)
+}
+
+export default { getAll, create, setToken, likeBlog, deleteBlog }
