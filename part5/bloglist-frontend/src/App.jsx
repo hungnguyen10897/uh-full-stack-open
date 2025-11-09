@@ -94,16 +94,18 @@ const App = () => {
 
       <div>{Notification({ message: noti })}</div>
 
-      <h3>{user.name} logged in</h3>
+      {user.name} logged in 
       <button type="submit" onSubmit={handleLogout}>
         logout
       </button>
 
-      <BlogForm
-        setNoti={setNoti}
-        setErrorMessage={setErrorMessage}
-        setAddedBlog={setAddedBlog}
-      />
+      <p>
+        <BlogForm
+          setNoti={setNoti}
+          setErrorMessage={setErrorMessage}
+          setAddedBlog={setAddedBlog}
+        />
+      </p>
 
       <br />
       {blogs.map((blog) => (
