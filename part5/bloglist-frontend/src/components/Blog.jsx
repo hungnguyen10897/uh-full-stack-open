@@ -1,7 +1,7 @@
 import { useState } from "react";
 import blogService from "../services/blogs";
 
-const Blog = ({ blog, user, setDeletedBlog }) => {
+const Blog = ({ blog, user, setDeletedBlog, likeTestProp }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -18,6 +18,10 @@ const Blog = ({ blog, user, setDeletedBlog }) => {
   };
 
   const handleLikeBlog = async () => {
+    if (likeTestProp) {
+      likeTestProp();
+      return;
+    }
     const updatedBlog = await blogService.likeBlog(statefulBlog);
     setBlog(updatedBlog);
   };
@@ -42,21 +46,23 @@ const Blog = ({ blog, user, setDeletedBlog }) => {
   }
 
   return (
-    <div style={blogStyle}>
-      <p>
-        {statefulBlog.title}
-        <button onClick={toggleVisibility}>hide</button>
-      </p>
-      <p>{statefulBlog.url}</p>
-      <p>
-        likes {statefulBlog.likes}{" "}
-        <button onClick={handleLikeBlog}>like</button>
-      </p>
-      <p>{statefulBlog.author}</p>
-      {user.id === statefulBlog.user.id && (
-        <button onClick={handleRemove}>remove</button>
-      )}
-    </div>
+    <li className="blog">
+      <div style={blogStyle}>
+        <p>
+          {statefulBlog.title}
+          <button onClick={toggleVisibility}>hide</button>
+        </p>
+        <p>{statefulBlog.url}</p>
+        <p>
+          likes {statefulBlog.likes}{" "}
+          <button onClick={handleLikeBlog}>like</button>
+        </p>
+        <p>{statefulBlog.author}</p>
+        {user && user.id === statefulBlog.user.id && (
+          <button onClick={handleRemove}>remove</button>
+        )}
+      </div>
+    </li>
   );
 };
 

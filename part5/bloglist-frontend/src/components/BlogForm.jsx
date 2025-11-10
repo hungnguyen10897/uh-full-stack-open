@@ -10,6 +10,15 @@ const BlogForm = (props) => {
   const handleCreate = async (event) => {
     event.preventDefault();
 
+    if (props.testCreate) {
+      props.testCreate({
+        title: title,
+        author: author,
+        url: url,
+      });
+      return;
+    }
+
     try {
       const newBlog = {
         title: title,
