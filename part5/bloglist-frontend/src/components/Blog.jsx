@@ -45,6 +45,8 @@ const Blog = ({ blog, user, setDeletedBlog, likeTestProp }) => {
     );
   }
 
+  console.log(user, statefulBlog.user.id, user.id === statefulBlog.user.id);
+
   return (
     <li className="blog">
       <div style={blogStyle}>

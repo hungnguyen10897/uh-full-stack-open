@@ -64,9 +64,55 @@ describe('Blog app', () => {
       await expect(page.getByText('MY BLOG MY AUTHOR')).toBeVisible()
     })
 
-    // test('a blog can be liked', async ({ page }) => {
-    //   await page.getByRole('button', { name: 'view' }).click()
+    test('a blog can be liked', async ({ page }) => {
+      await page.getByRole('button', { name: 'view' }).click()
+      await page.getByRole('button', { name: 'like' }).click()
+    })
 
-    // })
+    test('a blog can be removed', async ({ page }) => {
+      page.on('dialog', dialog => dialog.accept());
+      await page.getByRole('button', { name: 'view' }).click()
+      await page.getByRole('button', { name: 'remove' }).click()
+      await expect(page.getByText('MY BLOG MY AUTHOR')).not.toBeVisible()
+    })
+
+    test('only the user who added the blog sees the remove button', async ({ page, request }) => {
+      await page.getByRole('button', { name: 'logout' }).click()
+      await request.post('http://localhost:3003/api/users', {
+        data: {
+          name: 'Jane Doe',
+          username: 'jane',
+          password: 'doe'
+        }
+      })
+      await page.getByLabel('username').fill('jane')
+      await page.getByLabel('password').fill('doe')
+      await page.getByRole('button', { name: 'login' }).click()
+
+      await page.getByRole('button', { name: 'view' }).click()
+      await expect(page.getByRole('button', { name: 'remove' })).toBeHidden()
+    })
+
+    test('blogs are arranged in the order according to the likes', async ({ page, request }) => {
+      await page.getByLabel('title').fill('YOUR BLOG')
+      await page.getByLabel('author').fill('YOUR AUTHOR')
+      await page.getByLabel('url').fill('YOUR URL')
+      await page.getByRole('button', { name: 'create' }).click()
+
+      await page.getByRole('button', { name: 'view' }).nth(1).click()
+      await page.getByRole('button', { name: 'like' }).click()
+
+      await page.reload()
+      await page.waitForLoadState('networkidle');
+
+      const content = await page.content()
+
+      const blog1Index = content.indexOf('MY BLOG MY AUTHOR')
+      const blog2Index = content.indexOf('YOUR BLOG YOUR AUTHOR')
+
+      expect(blog1Index).toBeGreaterThan(-1);
+      expect(blog2Index).toBeGreaterThan(-1);
+      expect(blog1Index).toBeGreaterThan(blog2Index);
+    })
   })
 })
