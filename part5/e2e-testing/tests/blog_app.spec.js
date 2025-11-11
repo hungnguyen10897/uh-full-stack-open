@@ -42,6 +42,7 @@ describe('Blog app', () => {
 
       const errorDiv = page.locator('.error')
       await expect(errorDiv).toContainText('wrong credentials')
+      await expect(page.getByText('logged in', { exact: false })).not.toBeVisible()
     })
   })
 
