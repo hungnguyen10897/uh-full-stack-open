@@ -40,7 +40,32 @@ describe('Blog app', () => {
       await page.getByLabel('password').fill('salainen')
       await page.getByRole('button', { name: 'login' }).click()
 
-      await expect(page.getByText('Matti Luukkainen logged in')).not.toBeVisible()
+      const errorDiv = page.locator('.error')
+      await expect(errorDiv).toContainText('wrong credentials')
     })
+  })
+
+  describe('When logged in', () => {
+    beforeEach(async ({ page }) => {
+      await page.getByLabel('username').fill('john')
+      await page.getByLabel('password').fill('doe')
+      await page.getByRole('button', { name: 'login' }).click()
+
+      await page.getByRole('button', { name: 'create new blog' }).click()
+      await page.getByLabel('title').fill('MY BLOG')
+      await page.getByLabel('author').fill('MY AUTHOR')
+      await page.getByLabel('url').fill('MY URL')
+      await page.getByRole('button', { name: 'create' }).click()
+    })
+
+    test('a new blog can be created', async ({ page }) => {
+      await expect(page.getByText('a new blog MY BLOG by MY AUTHOR added')).toBeVisible()
+      await expect(page.getByText('MY BLOG MY AUTHOR')).toBeVisible()
+    })
+
+    // test('a blog can be liked', async ({ page }) => {
+    //   await page.getByRole('button', { name: 'view' }).click()
+
+    // })
   })
 })
