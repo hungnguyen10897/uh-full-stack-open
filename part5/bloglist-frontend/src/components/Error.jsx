@@ -1,8 +1,8 @@
-const Notification = ({ message }) => {
+const Error = ({ message }) => {
   const style = {
-    backgroundColor: "#ffe6e6",   // light red background
-    color: "#cc0000",             // dark red text
-    border: "2px solid #cc0000",  // solid red border
+    backgroundColor: "#ffe6e6", // light red background
+    color: "#cc0000", // dark red text
+    border: "2px solid #cc0000", // solid red border
     borderRadius: "4px",
     padding: "8px 15px",
     fontFamily: "Arial, sans-serif",
@@ -14,7 +14,11 @@ const Notification = ({ message }) => {
     return null;
   }
 
-  return <div style={style}>{message}</div>;
+  return (
+    <div className="error" style={style}>
+      {message}
+    </div>
+  );
 };
 
-export default Notification;
+export default Error;
